@@ -23,9 +23,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Se deshabilita Watch Dog Timer, para evitar que se encicle (_WDT_OFF)
+// Set GP3 como I/O Digital (0) y NO Reset(MCLRE CONFIG[5]) (1)
+// Se deshabilita Watch Dog Timer, para evitar que se encicle
 typedef unsigned int word ;
-word __at 0x2007 __CONFIG = ( _WDT_OFF );
+word __at 0x2007 __CONFIG = ( _WDT_OFF & _MCLRE_OFF );
  
 void delay (unsigned int tiempo);
 
