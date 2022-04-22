@@ -12,7 +12,7 @@ Ingresar el siguiente comando para crear los archivos binarios a partir del arch
 
 Luego, abrir el simulador SIMULIDE.
 
-Abrir  el archivo .sim1.
+Abrir  el archivo .sim1
 
 Ejecutar el circuito.
 
