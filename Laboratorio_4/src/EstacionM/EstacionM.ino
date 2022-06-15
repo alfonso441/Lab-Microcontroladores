@@ -1,6 +1,5 @@
 /*
- * Incubadora - Lee temperatura, humedad y controla temperatura con PID y Resistor. 
- *              Imprime datos en LCD PCD8544. Comunicación serial con PC + Python.
+ * Estación Meteorológica
  *
  * Autor:   Alfonso Castillo Orozco
  * Año:     2022
@@ -31,8 +30,6 @@ static const byte PPHorizontalPin = A6; // Posición Horizontal de Panel sensada
 static const byte SwitchPantalla  = 2;  // Comunicación por Pantalla LCD
 static const byte SwitchUSART     = 8;  // Comunicación por USART
 static const byte LluviaPin       = 9;  // Lluvia sensada
-//static const byte PWM_ServoPPVerticalPin    = 10; // Servomotor Posición Panel Horizontal
-//static const byte PWM_ServoPPHorizontalPin  = 11; // Servomotor Posición Panel Horizontal
 static const byte ledUSARTPin     = 12; // LED Verde - Comunicación USART
 static const byte ledBateriaPin   = 13; // LED Rojo - Batería Baja
 
@@ -74,8 +71,6 @@ void setup() {
   pinMode(ledBateriaPin, OUTPUT);
 
   // *** Configuración Servomotores *** //
-  //ServoPPVertical.attach(PWM_ServoPPVerticalPin);
-  //ServoPPHorizontal.attach(PWM_ServoPPHorizontalPin);
   ServoPPVertical.attach(10);
   ServoPPHorizontal.attach(11);
 
@@ -99,40 +94,15 @@ void loop() {
   static byte xChart = LCD_WIDTH;
 
   ////////////////////////////////////////////////////////////////////
-  // Lectura de Temperatura de Referencia - Setpoint - (0 - 80) °C
-  ////////////////////////////////////////////////////////////////////
-  
-  // Read the SET temperature (in celsius)...
-  // y = mx + b (V)
-  // x = (y-b)/m
-  //double voltageSET_value_pin = analogRead(setTempPin)*(80/1023.0);// y
-  //float m = (3.19-2.5)/(200-0);// m=V/°C // b=2.5V
-  //Setpoint = voltageSET_value_pin;//(1.1 * analogRead(sensorPin) * 100.0) / 1023.0;
-
-  ////////////////////////////////////////////////////////////////////
   // Sensor de Temperatura - (0 - 100) °C
   ////////////////////////////////////////////////////////////////////
   
   // Read the temperature (in celsius)...
   // y = mx + b (V)
   // x = (y-b)/m
-  //float voltage_value_pin = analogRead(sensorPin)*(3.19/1023.0);// y
-  //float m = (3.19-2.5)/(200-0);// m=V/°C // b=2.5V
-  //float temp = (voltage_value_pin - 2.5)/m;//(1.1 * analogRead(sensorPin) * 100.0) / 1023.0;
-  //float temp = voltage_value_pin;
   double voltage_value_pin = analogRead(TemperaturaPin)*(3/1023.0);// y
   double m = (3-2.6)/(100-0);// m=V/°C // b=2.6V
-  double TemperaturaValue = (voltage_value_pin - 2.6)/m;//(1.1 * analogRead(sensorPin) * 100.0) / 1023.0;
-  //float temp = voltage_value_pin;
-
-  ////////////////////////////////////////////////////////////////////
-  // PID para ajustar a Temperatura de Referencia con Resistor
-  ////////////////////////////////////////////////////////////////////
-  
-  //myPID.Compute();
-  //double Output_Escalado = round(Output*(Setpoint/80.0));
-  
-  //analogWrite(PWM_ResistorPin, Output_Escalado);
+  double TemperaturaValue = (voltage_value_pin - 2.6)/m;
 
   ////////////////////////////////////////////////////////////////////
   // Sensor de Humedad - (0 - 100) %
@@ -147,10 +117,10 @@ void loop() {
   double LuzValue = analogRead(LuzPin)*(1000.0/1023.0);
 
   ////////////////////////////////////////////////////////////////////
-  // Sensor de Velocidad del Viento - (0 - 1000) m/s
+  // Sensor de Velocidad del Viento - (0 - 50) m/s
   ////////////////////////////////////////////////////////////////////
- //** 
-  double VelocidadValue = analogRead(VelocidadPin)*(1000.0/1023.0);
+
+  double VelocidadValue = analogRead(VelocidadPin)*(50.0/1023.0);
 
   ////////////////////////////////////////////////////////////////////
   // Sensor de Lluvia - (0 - 1): (Llueve - No Llueve)
@@ -227,12 +197,7 @@ void loop() {
      // *** LCD - Imprime Lluvia *** //
     lcd.setCursor(0, 4);
     lcd.print(Lluvia_String);
-    //lcd.print(Output_Escalado, 1);
-    //lcd.print(" m/s "); // m/s: (0 - 1000)
-  
-    // *** LCD - Línea en blanco *** //
-    //lcd.setCursor(0, 2);
-    //lcd.print("");
+
   }
   // Apagar pantalla - Simulado - NO PIN Vin en Simulador
   else {
@@ -272,31 +237,24 @@ void loop() {
     Serial.print("Humedad    : ");
     Serial.print( HumedadValue );
     Serial.print(" % \n");
-    //Serial.print(" \n");
 
     // *** PC - Imprime Luminosidad *** //
     Serial.print("Luz        : ");
     Serial.print( LuzValue );
-    //Serial.print(" ");
-    //Serial.print(char(176));
     Serial.print(" Lux \n");
 
     // *** PC - Imprime Velocidad del Viento *** //
-    //Serial.print("Humedad    : ");
     Serial.print("Velocidad V: ");
     Serial.print( VelocidadValue );
     Serial.print(" m/s \n");
 
     // *** PC - Imprime Lluvia *** //
     Serial.print(Lluvia_String);
-    //Serial.print( VientoValue );
-    //Serial.print(" m/s \n");
     Serial.print(" \n");
 
     // *** PC - Imprime Batería *** //
     Serial.print(Bateria_String);
     Serial.print(" \n");
-    //Serial.print(" \n");
     
   }
   
