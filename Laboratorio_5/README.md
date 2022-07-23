@@ -4,4 +4,4 @@ Este laboratorio consiste en la utilización de una tarjeta Discovery STM32F49, 
 
 ## Instrucciones
 
-Las instrucciones de uso y otros detalles se encuentran en el archivo de dirección ./src/Informe_Lab5_B41546.
+Las instrucciones de uso y otros detalles se encuentran en el archivo de dirección ./informe/Informe_Lab5_B41546.
